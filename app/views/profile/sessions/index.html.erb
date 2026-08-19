@@ -1,0 +1,35 @@
+<% content_for :title, "Sessions" %>
+
+<div class="mx-auto max-w-3xl">
+  <div class="card overflow-hidden">
+    <div class="border-b border-slate-200 px-6 py-4">
+      <h2 class="text-base font-semibold text-slate-900">Active sessions</h2>
+      <p class="mt-1 text-sm text-slate-500">Sign out any browser you no longer recognise.</p>
+    </div>
+
+    <ul class="divide-y divide-slate-200">
+      <% @sessions.each do |user_session| %>
+        <li class="flex items-center justify-between gap-4 px-6 py-4">
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium text-slate-900">
+              <%= user_session.user_agent.presence || "Unknown browser" %>
+              <% if user_session.id == Current.session.id %>
+                <span class="badge bg-emerald-100 text-emerald-800">This device</span>
+              <% end %>
+            </p>
+            <p class="mt-0.5 text-xs text-slate-500">
+              <%= user_session.ip_address.presence || "unknown address" %> ·
+              signed in <%= time_ago_in_words(user_session.created_at) %> ago
+            </p>
+          </div>
+          <%= button_to "Sign out", profile_session_path(user_session), method: :delete,
+                class: "btn-secondary", form: { data: { turbo_confirm: "Sign out this session?" } } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to profile", profile_path, class: "btn-ghost" %>
+  </div>
+</div>

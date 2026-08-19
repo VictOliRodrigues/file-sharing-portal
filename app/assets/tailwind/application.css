@@ -1,1 +1,85 @@
 @import "tailwindcss";
+
+/*
+ * Small component layer so that templates stay readable. Anything used on more
+ * than two screens lives here instead of being repeated as utility soup.
+ *
+ * Tailwind v4 only lets @apply reference real utilities, so shared bases are
+ * declared through grouped selectors rather than by applying one custom class
+ * inside another.
+ */
+@layer components {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium
+           transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           focus-visible:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn {
+    @apply bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .form-input,
+  .form-select {
+    @apply block w-full rounded-lg border-0 px-3 py-2 text-slate-900 shadow-sm ring-1 ring-inset
+           ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset
+           focus:ring-indigo-600 sm:text-sm;
+  }
+
+  .form-hint {
+    @apply mt-1.5 text-xs text-slate-500;
+  }
+
+  .card {
+    @apply rounded-xl bg-white shadow-sm ring-1 ring-slate-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+
+  .nav-link,
+  .nav-link-active {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium;
+  }
+
+  .nav-link {
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .nav-link-active {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+
+  .table-header {
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm text-slate-700;
+  }
+}

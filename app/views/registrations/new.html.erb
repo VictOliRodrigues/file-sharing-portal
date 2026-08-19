@@ -1,0 +1,50 @@
+<% content_for :title, "Create your account" %>
+
+<div class="card p-8">
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-semibold text-slate-900">Create your account</h1>
+    <p class="mt-1 text-sm text-slate-500">
+      <% if User.none? %>
+        This is the first account on this server, so it will be an administrator.
+      <% else %>
+        Start storing and sharing files on <%= portal_name %>.
+      <% end %>
+    </p>
+  </div>
+
+  <%= form_with model: @user, url: sign_up_path, class: "space-y-5" do |form| %>
+    <%= form_errors_for @user %>
+
+    <div>
+      <%= form.label :name, class: "form-label" %>
+      <%= form.text_field :name, required: true, autofocus: true, autocomplete: "name",
+            class: "form-input", placeholder: "Ada Lovelace" %>
+    </div>
+
+    <div>
+      <%= form.label :email_address, "Email address", class: "form-label" %>
+      <%= form.email_field :email_address, required: true, autocomplete: "username",
+            class: "form-input", placeholder: "you@example.com" %>
+    </div>
+
+    <div>
+      <%= form.label :password, class: "form-label" %>
+      <%= form.password_field :password, required: true, autocomplete: "new-password",
+            class: "form-input" %>
+      <p class="form-hint">At least <%= User::MINIMUM_PASSWORD_LENGTH %> characters. A passphrase works well.</p>
+    </div>
+
+    <div>
+      <%= form.label :password_confirmation, "Confirm password", class: "form-label" %>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password",
+            class: "form-input" %>
+    </div>
+
+    <%= form.submit "Create account", class: "btn-primary w-full" %>
+  <% end %>
+
+  <p class="mt-6 text-center text-sm text-slate-500">
+    Already have an account?
+    <%= link_to "Sign in", sign_in_path, class: "text-indigo-600 hover:text-indigo-500" %>
+  </p>
+</div>

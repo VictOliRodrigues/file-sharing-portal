@@ -1,0 +1,10 @@
+<div class="rounded-lg bg-red-50 px-4 py-3 ring-1 ring-inset ring-red-200">
+  <p class="text-sm font-medium text-red-800">
+    <%= pluralize(record.errors.count, "error") %> prevented this from being saved:
+  </p>
+  <ul class="mt-2 list-disc list-inside space-y-1 text-sm text-red-700">
+    <% record.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+</div>

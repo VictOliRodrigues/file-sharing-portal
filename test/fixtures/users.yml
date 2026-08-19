@@ -1,0 +1,26 @@
+<% password_digest = BCrypt::Password.create("correct horse battery staple", cost: BCrypt::Engine::MIN_COST) %>
+
+admin:
+  name: Ada Lovelace
+  email_address: ada@example.com
+  password_digest: <%= password_digest %>
+  admin: true
+
+alice:
+  name: Alice Martin
+  email_address: alice@example.com
+  password_digest: <%= password_digest %>
+  admin: false
+
+bob:
+  name: Bob Silva
+  email_address: bob@example.com
+  password_digest: <%= password_digest %>
+  admin: false
+
+disabled:
+  name: Dana Rivers
+  email_address: dana@example.com
+  password_digest: <%= password_digest %>
+  admin: false
+  disabled_at: <%= 2.days.ago.to_fs(:db) %>

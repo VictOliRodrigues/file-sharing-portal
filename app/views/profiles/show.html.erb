@@ -1,0 +1,73 @@
+<% content_for :title, "Profile" %>
+
+<div class="mx-auto max-w-3xl space-y-6">
+  <section class="card p-6">
+    <h2 class="text-base font-semibold text-slate-900">Account details</h2>
+    <p class="mt-1 text-sm text-slate-500">Your name and email address.</p>
+
+    <%= form_with model: @user, url: profile_path, method: :patch, class: "mt-6 space-y-5" do |form| %>
+      <%= form_errors_for @user if @user.errors.any? && @user.errors[:current_password].empty? %>
+
+      <div>
+        <%= form.label :name, class: "form-label" %>
+        <%= form.text_field :name, required: true, autocomplete: "name", class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :email_address, "Email address", class: "form-label" %>
+        <%= form.email_field :email_address, required: true, autocomplete: "username", class: "form-input" %>
+      </div>
+
+      <div class="flex justify-end">
+        <%= form.submit "Save changes", class: "btn-primary" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="card p-6">
+    <h2 class="text-base font-semibold text-slate-900">Change password</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Changing your password signs you out of every other device.
+    </p>
+
+    <%= form_with model: @user, url: profile_password_path, method: :patch, class: "mt-6 space-y-5" do |form| %>
+      <% if @user.errors[:current_password].any? %>
+        <div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-inset ring-red-200">
+          Current password is incorrect.
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :current_password, class: "form-label" %>
+        <%= form.password_field :current_password, required: true,
+              autocomplete: "current-password", class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :password, "New password", class: "form-label" %>
+        <%= form.password_field :password, required: true, autocomplete: "new-password", class: "form-input" %>
+        <p class="form-hint">At least <%= User::MINIMUM_PASSWORD_LENGTH %> characters.</p>
+      </div>
+
+      <div>
+        <%= form.label :password_confirmation, "Confirm new password", class: "form-label" %>
+        <%= form.password_field :password_confirmation, required: true,
+              autocomplete: "new-password", class: "form-input" %>
+      </div>
+
+      <div class="flex justify-end">
+        <%= form.submit "Change password", class: "btn-primary" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="card p-6">
+    <h2 class="text-base font-semibold text-slate-900">Sessions</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Every browser currently signed in to your account.
+    </p>
+    <div class="mt-4">
+      <%= link_to "Manage sessions", profile_sessions_path, class: "btn-secondary" %>
+    </div>
+  </section>
+</div>

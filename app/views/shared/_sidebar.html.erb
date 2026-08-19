@@ -1,0 +1,20 @@
+<aside class="lg:w-64 lg:shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white">
+  <div class="flex h-full flex-col gap-y-5 px-4 py-5">
+    <%= link_to root_path, class: "flex items-center gap-2 px-2" do %>
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+        <%= inline_icon :storage, css_class: "h-5 w-5" %>
+      </span>
+      <span class="truncate text-base font-semibold text-slate-900"><%= portal_name %></span>
+    <% end %>
+
+    <nav class="flex flex-1 flex-col">
+      <ul class="space-y-1">
+        <li><%= nav_link_to "Dashboard", root_path, icon: :dashboard, active: current_page?(root_path) %></li>
+      </ul>
+
+      <ul class="mt-auto space-y-1 pt-6">
+        <li><%= nav_link_to "Profile", profile_path, icon: :settings, active: controller_name == "profiles" %></li>
+      </ul>
+    </nav>
+  </div>
+</aside>

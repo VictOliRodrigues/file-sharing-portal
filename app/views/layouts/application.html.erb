@@ -1,31 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="h-full bg-slate-50">
   <head>
-    <title><%= content_for(:title) || "File Sharing Portal" %></title>
+    <title><%= content_for(:title) ? "#{content_for(:title)} · #{portal_name}" : portal_name %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="File Sharing Portal">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="robots" content="noindex, nofollow">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body class="h-full text-slate-900 antialiased">
+    <% if authenticated? %>
+      <div class="min-h-full lg:flex">
+        <%= render "shared/sidebar" %>
+
+        <div class="flex-1 min-w-0">
+          <%= render "shared/topbar" %>
+
+          <main class="px-4 py-6 sm:px-6 lg:px-8">
+            <%= render "shared/flash" %>
+            <%= yield %>
+          </main>
+        </div>
+      </div>
+    <% else %>
+      <main class="flex min-h-full flex-col justify-center px-6 py-12">
+        <div class="w-full max-w-md mx-auto">
+          <%= render "shared/flash" %>
+          <%= yield %>
+        </div>
+      </main>
+    <% end %>
   </body>
 </html>

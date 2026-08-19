@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :sessions, dependent: :destroy
+  has_many :folders, dependent: :destroy
   has_many :stored_files, dependent: :destroy
   has_many :downloads, dependent: :nullify
 

@@ -23,6 +23,8 @@ class StoredFile < ApplicationRecord
   }.freeze
 
   belongs_to :user
+  # A null folder means the file sits at the root of the drive.
+  belongs_to :folder, optional: true
 
   has_one_attached :attachment
   has_many :downloads, dependent: :destroy
@@ -33,6 +35,7 @@ class StoredFile < ApplicationRecord
   validates :content_type, presence: true, length: { maximum: 255 }
   validates :byte_size, numericality: { greater_than_or_equal_to: 0 }
   validate  :name_must_not_contain_a_path
+  validate  :folder_must_belong_to_the_same_user
   validate  :attachment_must_be_present
   validate  :attachment_within_size_limit
   validate  :attachment_type_must_be_allowed
@@ -42,6 +45,7 @@ class StoredFile < ApplicationRecord
   scope :discarded, -> { where.not(deleted_at: nil) }
   scope :recent,    -> { order(created_at: :desc) }
   scope :ordered,   -> { order(Arel.sql("LOWER(name) ASC")) }
+  scope :in_folder, ->(folder) { where(folder_id: folder&.id) }
 
   scope :named_like, ->(term) {
     next all if term.blank?
@@ -126,6 +130,13 @@ class StoredFile < ApplicationRecord
       return unless name.include?(SafeFilename::SEPARATOR) || name.include?(SafeFilename::BACKSLASH)
 
       errors.add(:name, "cannot contain a path separator")
+    end
+
+    def folder_must_belong_to_the_same_user
+      return if folder.nil?
+      return if folder.user_id == user_id && !folder.deleted?
+
+      errors.add(:folder, "does not exist")
     end
 
     def attachment_must_be_present

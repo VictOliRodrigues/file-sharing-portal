@@ -1,0 +1,30 @@
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+  <section class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Rename folder</h3>
+    <%= form_with model: folder, url: folder_path(folder), method: :patch,
+          class: "mt-4 flex flex-wrap items-end gap-3" do |form| %>
+      <div class="min-w-0 flex-1">
+        <%= form.label :name, "Folder name", class: "form-label" %>
+        <%= form.text_field :name, required: true, class: "form-input" %>
+      </div>
+      <%= form.submit "Rename", class: "btn-secondary" %>
+    <% end %>
+  </section>
+
+  <section class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Move folder</h3>
+    <p class="mt-1 text-sm text-slate-500">
+      A folder cannot be moved into itself or into one of its own subfolders.
+    </p>
+    <%= form_with model: folder, url: folder_path(folder), method: :patch,
+          class: "mt-4 flex flex-wrap items-end gap-3" do |form| %>
+      <div class="min-w-0 flex-1">
+        <%= form.label :parent_id, "Destination", class: "form-label" %>
+        <%= form.collection_select :parent_id, move_targets, :id, :name,
+              { include_blank: "All files (root)", selected: folder.parent_id },
+              class: "form-select" %>
+      </div>
+      <%= form.submit "Move", class: "btn-secondary" %>
+    <% end %>
+  </section>
+</div>

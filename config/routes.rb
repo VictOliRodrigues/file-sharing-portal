@@ -17,8 +17,16 @@ Rails.application.routes.draw do
     resources :sessions, only: %i[index destroy]
   end
 
-  # --- Files ----------------------------------------------------------------
+  # --- Drive ----------------------------------------------------------------
+  # /files is the root of the drive; /folders/:id browses one folder.
   resources :files, only: %i[index new create show update destroy] do
+    member do
+      post   :restore
+      delete :purge
+    end
+  end
+
+  resources :folders, only: %i[show create update destroy] do
     member do
       post   :restore
       delete :purge

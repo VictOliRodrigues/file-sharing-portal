@@ -4,30 +4,66 @@
   <div>
     <h2 class="text-base font-semibold text-slate-900">Trash</h2>
     <p class="mt-1 text-sm text-slate-500">
-      Deleted files stay here until you remove them permanently. They still count
-      towards your storage usage.
+      Deleted items stay here until you remove them permanently. They still count
+      towards your storage usage. Restoring a folder brings back everything that
+      was deleted with it.
     </p>
   </div>
 
-  <% if @stored_files.any? %>
+  <% if @folders.any? || @stored_files.any? %>
     <div class="card overflow-hidden">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-200">
           <thead class="bg-slate-50">
             <tr>
               <th class="table-header">Name</th>
+              <th class="table-header">Kind</th>
               <th class="table-header">Size</th>
               <th class="table-header hidden md:table-cell">Deleted</th>
               <th class="table-header"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 bg-white">
+            <% @folders.each do |folder| %>
+              <tr class="hover:bg-slate-50">
+                <td class="table-cell">
+                  <div class="flex items-center gap-3">
+                    <span class="text-indigo-500"><%= inline_icon :folder %></span>
+                    <span class="block max-w-xs truncate font-medium text-slate-900"
+                          title="<%= folder.name %>"><%= folder.name %></span>
+                  </div>
+                </td>
+                <td class="table-cell"><span class="badge bg-indigo-50 text-indigo-700">folder</span></td>
+                <td class="table-cell whitespace-nowrap">--</td>
+                <td class="table-cell hidden whitespace-nowrap md:table-cell">
+                  <%= time_ago_in_words(folder.deleted_at) %> ago
+                </td>
+                <td class="table-cell">
+                  <div class="flex items-center justify-end gap-1">
+                    <%= button_to restore_folder_path(folder), method: :post, class: "btn-ghost",
+                          title: "Restore" do %>
+                      <%= inline_icon :restore %><span class="sr-only">Restore</span>
+                    <% end %>
+                    <%= button_to purge_folder_path(folder), method: :delete, class: "btn-ghost",
+                          title: "Delete permanently",
+                          form: { data: { turbo_confirm: "Permanently delete #{folder.name} and everything inside it? This cannot be undone." } } do %>
+                      <%= inline_icon :trash %><span class="sr-only">Delete permanently</span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+
             <% @stored_files.each do |stored_file| %>
               <tr class="hover:bg-slate-50">
                 <td class="table-cell">
-                  <span class="block max-w-xs truncate font-medium text-slate-900"
-                        title="<%= stored_file.name %>"><%= stored_file.name %></span>
+                  <div class="flex items-center gap-3">
+                    <span class="text-slate-400"><%= inline_icon :files %></span>
+                    <span class="block max-w-xs truncate font-medium text-slate-900"
+                          title="<%= stored_file.name %>"><%= stored_file.name %></span>
+                  </div>
                 </td>
+                <td class="table-cell"><span class="badge bg-slate-100 text-slate-700">file</span></td>
                 <td class="table-cell whitespace-nowrap"><%= human_size(stored_file.byte_size) %></td>
                 <td class="table-cell hidden whitespace-nowrap md:table-cell">
                   <%= time_ago_in_words(stored_file.deleted_at) %> ago
@@ -54,7 +90,7 @@
   <% else %>
     <div class="card px-6 py-16 text-center">
       <h3 class="text-sm font-semibold text-slate-900">The trash is empty</h3>
-      <p class="mt-1 text-sm text-slate-500">Deleted files will show up here.</p>
+      <p class="mt-1 text-sm text-slate-500">Deleted files and folders will show up here.</p>
     </div>
   <% end %>
 </div>

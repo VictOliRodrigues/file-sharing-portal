@@ -46,14 +46,21 @@
   </div>
 
   <div class="card p-6">
-    <h3 class="text-base font-semibold text-slate-900">Rename</h3>
+    <h3 class="text-base font-semibold text-slate-900">Rename and move</h3>
     <%= form_with model: @stored_file, url: file_path(@stored_file), method: :patch,
-          class: "mt-4 flex flex-wrap items-end gap-3" do |form| %>
-      <div class="min-w-0 flex-1">
+          class: "mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" do |form| %>
+      <div>
         <%= form.label :name, "File name", class: "form-label" %>
         <%= form.text_field :name, required: true, class: "form-input" %>
       </div>
-      <%= form.submit "Rename", class: "btn-secondary" %>
+      <div>
+        <%= form.label :folder_id, "Folder", class: "form-label" %>
+        <%= form.collection_select :folder_id, @move_targets, :id, :name,
+              { include_blank: "All files (root)" }, class: "form-select" %>
+      </div>
+      <div class="sm:col-span-2 flex justify-end">
+        <%= form.submit "Save", class: "btn-secondary" %>
+      </div>
     <% end %>
   </div>
 

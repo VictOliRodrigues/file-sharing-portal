@@ -1,0 +1,6 @@
+<%= form_with model: Folder.new, url: folders_path, class: "flex items-center gap-2" do |form| %>
+  <%= form.hidden_field :parent_id, value: parent&.id %>
+  <%= form.text_field :name, required: true, placeholder: "New folder name",
+        class: "form-input w-44 py-1.5 text-sm", "aria-label": "New folder name" %>
+  <%= form.submit "Create folder", class: "btn-secondary whitespace-nowrap" %>
+<% end %>

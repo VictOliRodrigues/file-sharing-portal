@@ -2,41 +2,53 @@ class FilesController < ApplicationController
   before_action :set_stored_file, only: %i[show update destroy]
   before_action :set_discarded_file, only: %i[restore purge]
 
+  # The root of the drive: folders and files that have no parent.
   def index
-    @stored_files = owned_files.kept.ordered
+    @folder = nil
+    @folders = current_user.folders.kept.roots.ordered
+    @stored_files = owned_files.kept.in_folder(nil).ordered
+    @breadcrumbs = []
+    @move_targets = current_user.folders.kept.ordered
+
+    render "folders/browse"
   end
 
   def new
-    @stored_file = current_user.stored_files.new
+    @folder = find_optional_folder(params[:folder_id])
+    @stored_file = owned_files.new
   end
 
   def show
     @downloads = @stored_file.downloads.recent.limit(10)
+    @move_targets = current_user.folders.kept.ordered
   end
 
   def create
+    folder = find_optional_folder(params[:folder_id])
     uploads = Array(params[:files]).reject(&:blank?)
+    destination = folder ? folder_path(folder) : files_path
 
     if uploads.empty?
-      redirect_to new_file_path, alert: "Choose at least one file to upload."
+      redirect_to new_file_path(folder_id: folder&.id), alert: "Choose at least one file to upload."
       return
     end
 
-    stored, rejected = store(uploads)
+    stored, rejected = store(uploads, folder)
 
     if rejected.empty?
-      redirect_to files_path, notice: "#{helpers.pluralize(stored.size, "file")} uploaded."
+      redirect_to destination, notice: "#{helpers.pluralize(stored.size, "file")} uploaded."
     elsif stored.any?
-      redirect_to files_path,
+      redirect_to destination,
                   alert: "Uploaded #{stored.size} of #{uploads.size} files. #{rejected.join(' ')}"
     else
-      redirect_to new_file_path, alert: rejected.join(" ")
+      redirect_to new_file_path(folder_id: folder&.id), alert: rejected.join(" ")
     end
   end
 
+  # Handles both renaming and moving between folders.
   def update
-    if @stored_file.update(rename_params)
-      redirect_back_or_to file_path(@stored_file), notice: "File renamed."
+    if @stored_file.update(file_params)
+      redirect_back_or_to file_path(@stored_file), notice: "File updated."
     else
       redirect_back_or_to file_path(@stored_file),
                           alert: @stored_file.errors.full_messages.to_sentence
@@ -44,12 +56,19 @@ class FilesController < ApplicationController
   end
 
   def destroy
+    folder = @stored_file.folder
     @stored_file.discard!
-    redirect_back_or_to files_path, notice: "#{@stored_file.name} moved to the trash."
+
+    redirect_back_or_to(folder ? folder_path(folder) : files_path,
+                        notice: "#{@stored_file.name} moved to the trash.")
   end
 
   def restore
+    # A file whose folder is still in the trash comes back to the root so that
+    # it can never end up somewhere the owner cannot reach.
+    @stored_file.folder = nil if @stored_file.folder&.deleted?
     @stored_file.undiscard!
+
     redirect_to trash_path, notice: "#{@stored_file.name} restored."
   end
 
@@ -74,18 +93,24 @@ class FilesController < ApplicationController
       @stored_file = owned_files.discarded.find(params[:id])
     end
 
-    def rename_params
-      # Only the display name may be changed here; size, type and owner are
-      # derived from the stored blob.
-      params.expect(stored_file: [ :name ])
+    def find_optional_folder(id)
+      return nil if id.blank?
+
+      current_user.folders.kept.find(id)
     end
 
-    def store(uploads)
+    def file_params
+      # Size, type and owner are derived from the stored blob and can never be
+      # set from a form. A folder_id outside the owner's tree fails validation.
+      params.expect(stored_file: [ :name, :folder_id ])
+    end
+
+    def store(uploads, folder)
       stored = []
       rejected = []
 
       uploads.each do |upload|
-        stored_file = current_user.stored_files.new
+        stored_file = owned_files.new(folder: folder)
         stored_file.attachment.attach(upload)
 
         if stored_file.save

@@ -1,0 +1,53 @@
+<% content_for :title, @folder ? @folder.name : "Files" %>
+
+<div class="space-y-6">
+  <%= render "folders/breadcrumbs", folder: @folder, breadcrumbs: @breadcrumbs %>
+
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base font-semibold text-slate-900">
+        <%= @folder ? @folder.name : "All files" %>
+      </h2>
+      <p class="mt-1 text-sm text-slate-500">
+        <%= pluralize(@folders.size, "folder") %> ·
+        <%= pluralize(@stored_files.size, "file") %>
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <%= render "folders/new_form", parent: @folder %>
+      <%= link_to new_file_path(folder_id: @folder&.id), class: "btn-primary" do %>
+        <%= inline_icon :upload %> Upload
+      <% end %>
+    </div>
+  </div>
+
+  <% if @folders.any? || @stored_files.any? %>
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="table-header">Name</th>
+              <th class="table-header">Size</th>
+              <th class="table-header hidden sm:table-cell">Type</th>
+              <th class="table-header hidden md:table-cell">Added</th>
+              <th class="table-header hidden md:table-cell">Downloads</th>
+              <th class="table-header"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <%= render partial: "folders/folder_row", collection: @folders, as: :folder %>
+            <%= render partial: "files/file_row", collection: @stored_files, as: :stored_file %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <%= render "files/empty_state", folder: @folder %>
+  <% end %>
+
+  <% if @folder %>
+    <%= render "folders/settings", folder: @folder, move_targets: @move_targets %>
+  <% end %>
+</div>

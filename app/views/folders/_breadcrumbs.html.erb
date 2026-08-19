@@ -1,0 +1,13 @@
+<nav class="flex items-center gap-1 text-sm text-slate-500" aria-label="Breadcrumb">
+  <%= link_to "All files", files_path,
+        class: folder ? "hover:text-slate-700" : "font-medium text-slate-900" %>
+
+  <% breadcrumbs.each_with_index do |crumb, index| %>
+    <span aria-hidden="true" class="text-slate-300">/</span>
+    <% if index == breadcrumbs.size - 1 %>
+      <span class="max-w-[12rem] truncate font-medium text-slate-900"><%= crumb.name %></span>
+    <% else %>
+      <%= link_to crumb.name, folder_path(crumb), class: "max-w-[10rem] truncate hover:text-slate-700" %>
+    <% end %>
+  <% end %>
+</nav>

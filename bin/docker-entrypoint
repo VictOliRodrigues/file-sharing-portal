@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+# Wait for PostgreSQL to accept connections before touching the schema. This
+# keeps `docker compose up` from failing when the database is still starting.
+if [ -n "${DATABASE_URL}" ] || [ -n "${POSTGRES_HOST}" ]; then
+  attempts=0
+  until ./bin/rails runner "ActiveRecord::Base.connection.verify!" >/dev/null 2>&1; do
+    attempts=$((attempts + 1))
+    if [ "${attempts}" -ge 30 ]; then
+      echo "Database is not reachable after ${attempts} attempts; giving up." >&2
+      exit 1
+    fi
+    echo "Waiting for the database (attempt ${attempts})..."
+    sleep 2
+  done
+fi
+
+# Create the database and run pending migrations when booting the web server.
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

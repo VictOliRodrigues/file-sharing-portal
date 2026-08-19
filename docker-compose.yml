@@ -1,0 +1,45 @@
+# Production-style Docker Compose stack.
+#
+#   cp .env.example .env   # then edit the values
+#   docker compose up -d --build
+#
+# The application listens on ${PORT:-3000} on the host. Put a reverse proxy
+# (nginx, Traefik, Caddy, Coolify) in front of it to terminate TLS.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-portal}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-file_sharing_portal_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-portal} -d ${POSTGRES_DB:-file_sharing_portal_production}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Always talk to the database service inside the Compose network.
+      POSTGRES_HOST: db
+    ports:
+      - "${PORT:-3000}:80"
+    volumes:
+      # Uploaded files when ACTIVE_STORAGE_SERVICE=local.
+      - portal_storage:/rails/storage
+
+volumes:
+  postgres_data:
+  portal_storage:

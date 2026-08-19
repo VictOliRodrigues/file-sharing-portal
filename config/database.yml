@@ -1,0 +1,27 @@
+# PostgreSQL configuration.
+#
+# Every setting is driven by environment variables so the same image can run in
+# development, CI and production without code changes.
+#
+# If DATABASE_URL is present (Coolify, Heroku, Docker Compose, ...) Rails merges
+# it on top of the values below, so a single connection string is enough.
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", 5432) %>
+  username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "") %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("POSTGRES_DB", "file_sharing_portal_development") %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("POSTGRES_TEST_DB", "file_sharing_portal_test") %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch("POSTGRES_DB", "file_sharing_portal_production") %>

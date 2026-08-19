@@ -1,0 +1,43 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# Git.
+.git/
+.gitignore
+.github/
+
+# Environment files and secrets. These must never end up in an image.
+.env
+.env.*
+!.env.example
+/config/master.key
+/config/credentials/*.key
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore all environment-specific and generated files.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# Ignore locally uploaded files and built assets.
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Ignore test files and coverage output.
+/test/
+/coverage/
+
+# Ignore documentation and local tooling.
+/docs/
+*.md
+!README.md
+docker-compose*.yml

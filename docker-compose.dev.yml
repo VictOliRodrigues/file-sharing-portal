@@ -1,0 +1,49 @@
+# Development stack with live code reloading.
+#
+#   docker compose -f docker-compose.dev.yml up --build
+#
+# The application is available on http://localhost:3000 and the source tree is
+# bind-mounted, so edits on the host take effect immediately.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: file_sharing_portal_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: development
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: file_sharing_portal_development
+      POSTGRES_TEST_DB: file_sharing_portal_test
+      ALLOW_REGISTRATION: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+      - bundle_dev:/usr/local/bundle
+    command: [ "bin/docker-dev-entrypoint" ]
+
+volumes:
+  postgres_dev_data:
+  bundle_dev:

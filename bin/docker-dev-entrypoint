@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+# Entrypoint used by docker-compose.dev.yml. Keeps gems in sync with the
+# bind-mounted Gemfile, prepares the database and starts the dev server.
+bundle check || bundle install
+
+until bin/rails runner "ActiveRecord::Base.connection.verify!" >/dev/null 2>&1; do
+  echo "Waiting for the database..."
+  sleep 2
+done
+
+bin/rails db:prepare
+rm -f tmp/pids/server.pid
+
+exec bin/dev

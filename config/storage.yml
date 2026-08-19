@@ -1,0 +1,28 @@
+# Active Storage services.
+#
+# The service actually used at runtime is selected by the ACTIVE_STORAGE_SERVICE
+# environment variable (see config/environments/*.rb). Supported values:
+#
+#   local -> files are written to STORAGE_PATH on the local filesystem
+#   s3    -> files are written to any S3-compatible object store
+#
+# For S3-compatible providers that are not AWS (MinIO, Cloudflare R2,
+# Backblaze B2, Hetzner, Wasabi, ...) set S3_ENDPOINT as well.
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= ENV.fetch("STORAGE_PATH") { Rails.root.join("storage").to_s } %>
+
+s3:
+  service: S3
+  access_key_id: <%= ENV["S3_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["S3_SECRET_ACCESS_KEY"] %>
+  region: <%= ENV.fetch("S3_REGION", "us-east-1") %>
+  bucket: <%= ENV["S3_BUCKET"] %>
+<% if ENV["S3_ENDPOINT"].present? %>
+  endpoint: <%= ENV["S3_ENDPOINT"] %>
+  force_path_style: <%= ENV.fetch("S3_FORCE_PATH_STYLE", "true") %>
+<% end %>

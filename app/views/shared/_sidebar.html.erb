@@ -17,6 +17,9 @@
       </ul>
 
       <ul class="mt-auto space-y-1 pt-6">
+        <% if administrator? %>
+          <li><%= nav_link_to "Administration", admin_root_path, icon: :admin, active: controller_path.start_with?("admin") %></li>
+        <% end %>
         <li><%= nav_link_to "Profile", profile_path, icon: :settings, active: controller_path.start_with?("profile") %></li>
       </ul>
     </nav>

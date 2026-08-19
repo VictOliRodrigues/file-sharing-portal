@@ -55,6 +55,18 @@ Rails.application.routes.draw do
   get  "s/:token/folders/:folder_id", to: "public/shares#folder",    as: :share_folder
   get  "s/:token/files/:file_id",     to: "public/downloads#show",   as: :share_download
 
+  # --- Administration -------------------------------------------------------
+  namespace :admin do
+    root to: "dashboards#show"
+
+    resources :users, only: %i[index show new create update destroy] do
+      member do
+        post :disable
+        post :enable
+      end
+    end
+  end
+
   # --- Operations -----------------------------------------------------------
   # Returns 200 when the application boots correctly. Used by container health
   # checks and uptime monitors.

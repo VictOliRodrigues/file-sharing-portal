@@ -1,0 +1,55 @@
+<% content_for :title, "Add user" %>
+
+<div class="mx-auto max-w-xl">
+  <div class="card p-6">
+    <h2 class="text-base font-semibold text-slate-900">Add a user</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Useful when open registration is turned off. Share the password with the
+      account holder and ask them to change it.
+    </p>
+
+    <%= form_with model: @user, url: admin_users_path, class: "mt-6 space-y-5" do |form| %>
+      <%= form_errors_for @user %>
+
+      <div>
+        <%= form.label :name, class: "form-label" %>
+        <%= form.text_field :name, required: true, class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :email_address, "Email address", class: "form-label" %>
+        <%= form.email_field :email_address, required: true, class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :password, class: "form-label" %>
+        <%= form.password_field :password, required: true, autocomplete: "new-password",
+              class: "form-input" %>
+        <p class="form-hint">At least <%= User::MINIMUM_PASSWORD_LENGTH %> characters.</p>
+      </div>
+
+      <div>
+        <%= form.label :password_confirmation, "Confirm password", class: "form-label" %>
+        <%= form.password_field :password_confirmation, required: true,
+              autocomplete: "new-password", class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :storage_quota_bytes, "Storage quota in bytes", class: "form-label" %>
+        <%= form.number_field :storage_quota_bytes, min: 0, class: "form-input",
+              placeholder: "Leave empty for the server default" %>
+        <p class="form-hint">Enter 0 for unlimited.</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <%= form.check_box :admin, class: "h-4 w-4 rounded border-slate-300 text-indigo-600" %>
+        <%= form.label :admin, "Grant administrator rights", class: "text-sm text-slate-700" %>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <%= link_to "Cancel", admin_users_path, class: "btn-secondary" %>
+        <%= form.submit "Create account", class: "btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

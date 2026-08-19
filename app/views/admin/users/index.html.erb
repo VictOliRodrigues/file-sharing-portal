@@ -1,0 +1,68 @@
+<% content_for :title, "Users" %>
+
+<div class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base font-semibold text-slate-900">Users</h2>
+      <p class="mt-1 text-sm text-slate-500"><%= pluralize(@users.size, "account") %> on this server.</p>
+    </div>
+    <%= link_to "Add user", new_admin_user_path, class: "btn-primary" %>
+  </div>
+
+  <div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="table-header">Name</th>
+            <th class="table-header">Status</th>
+            <th class="table-header hidden sm:table-cell">Files</th>
+            <th class="table-header hidden sm:table-cell">Storage</th>
+            <th class="table-header hidden md:table-cell">Joined</th>
+            <th class="table-header"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          <% @users.each do |user| %>
+            <tr class="hover:bg-slate-50">
+              <td class="table-cell">
+                <%= link_to user.name, admin_user_path(user),
+                      class: "block truncate font-medium text-slate-900 hover:text-indigo-600" %>
+                <p class="truncate text-xs text-slate-500"><%= user.email_address %></p>
+              </td>
+              <td class="table-cell">
+                <div class="flex flex-wrap gap-1">
+                  <% if user.admin? %>
+                    <span class="badge bg-indigo-100 text-indigo-800">Admin</span>
+                  <% end %>
+                  <% if user.disabled? %>
+                    <span class="badge bg-red-100 text-red-800">Disabled</span>
+                  <% else %>
+                    <span class="badge bg-emerald-100 text-emerald-800">Active</span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="table-cell hidden sm:table-cell"><%= @files_by_user.fetch(user.id, 0) %></td>
+              <td class="table-cell hidden whitespace-nowrap sm:table-cell">
+                <%= human_size(@storage_by_user.fetch(user.id, 0)) %>
+              </td>
+              <td class="table-cell hidden whitespace-nowrap md:table-cell">
+                <%= l user.created_at.to_date, format: :long %>
+              </td>
+              <td class="table-cell text-right">
+                <% if user == current_user %>
+                  <span class="text-xs text-slate-400">You</span>
+                <% elsif user.disabled? %>
+                  <%= button_to "Enable", enable_admin_user_path(user), method: :post, class: "btn-ghost" %>
+                <% else %>
+                  <%= button_to "Disable", disable_admin_user_path(user), method: :post, class: "btn-ghost",
+                        form: { data: { turbo_confirm: "Disable #{user.name}? They will be signed out everywhere." } } %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

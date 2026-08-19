@@ -1,0 +1,98 @@
+<% content_for :title, "Administration" %>
+
+<div class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-base font-semibold text-slate-900">System overview</h2>
+      <p class="mt-1 text-sm text-slate-500">Usage across every account on this server.</p>
+    </div>
+    <%= link_to "Manage users", admin_users_path, class: "btn-primary" %>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <%= render "dashboard/stat", label: "Users", value: @statistics.users_count, icon: :admin,
+          detail: "#{@statistics.active_users} active · #{@statistics.disabled_users} disabled" %>
+    <%= render "dashboard/stat", label: "Files", value: @statistics.files_count, icon: :files,
+          detail: "#{@statistics.trashed_files} in trash · #{@statistics.folders_count} folders" %>
+    <%= render "dashboard/stat", label: "Storage used", value: human_size(@statistics.storage_used),
+          icon: :storage, detail: "#{human_size(@statistics.storage_in_trash)} of it in the trash" %>
+    <%= render "dashboard/stat", label: "Share links", value: @statistics.share_links_count,
+          icon: :share,
+          detail: "#{@statistics.active_share_links} active · #{@statistics.revoked_share_links} revoked" %>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <section class="card p-6">
+      <h3 class="text-base font-semibold text-slate-900">Activity in the last 30 days</h3>
+      <dl class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">New accounts</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= @statistics.new_users_count %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Uploads</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= @statistics.recent_uploads_count %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Downloads</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= @statistics.recent_downloads_count %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Total share downloads</dt>
+          <dd class="mt-1 text-xl font-semibold text-slate-900"><%= @statistics.share_downloads_count %></dd>
+        </div>
+      </dl>
+      <p class="mt-4 border-t border-slate-200 pt-4 text-xs text-slate-500">
+        Object store holds <%= human_size(@statistics.blob_storage_used) %> in total,
+        including blobs still queued for deletion.
+      </p>
+    </section>
+
+    <section class="card p-6">
+      <h3 class="text-base font-semibold text-slate-900">Storage by file type</h3>
+      <% categories = @statistics.files_by_category %>
+      <% if categories.any? %>
+        <ul class="mt-4 space-y-3">
+          <% total = categories.values.sum %>
+          <% categories.sort_by { |_, bytes| -bytes }.each do |category, bytes| %>
+            <li>
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-medium text-slate-700"><%= category.capitalize %></span>
+                <span class="text-slate-500"><%= human_size(bytes) %></span>
+              </div>
+              <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                <div class="h-full rounded-full bg-indigo-600"
+                     style="width: <%= total.positive? ? (bytes * 100.0 / total).round : 0 %>%"></div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="mt-2 text-sm text-slate-500">No files have been uploaded yet.</p>
+      <% end %>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="border-b border-slate-200 px-6 py-4">
+      <h3 class="text-base font-semibold text-slate-900">Largest accounts</h3>
+    </div>
+    <% top_users = @statistics.top_users_by_storage %>
+    <% if top_users.any? %>
+      <ul class="divide-y divide-slate-100">
+        <% top_users.each do |user, bytes| %>
+          <li class="flex items-center justify-between gap-4 px-6 py-3">
+            <div class="min-w-0">
+              <%= link_to user.name, admin_user_path(user),
+                    class: "block truncate text-sm font-medium text-slate-900 hover:text-indigo-600" %>
+              <p class="truncate text-xs text-slate-500"><%= user.email_address %></p>
+            </div>
+            <span class="shrink-0 text-sm text-slate-700"><%= human_size(bytes) %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="px-6 py-8 text-center text-sm text-slate-500">Nothing stored yet.</p>
+    <% end %>
+  </section>
+</div>

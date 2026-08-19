@@ -10,10 +10,12 @@
     <nav class="flex flex-1 flex-col">
       <ul class="space-y-1">
         <li><%= nav_link_to "Dashboard", root_path, icon: :dashboard, active: current_page?(root_path) %></li>
+        <li><%= nav_link_to "Files", files_path, icon: :files, active: controller_name == "files" %></li>
+        <li><%= nav_link_to "Trash", trash_path, icon: :trash, active: controller_name == "trash" %></li>
       </ul>
 
       <ul class="mt-auto space-y-1 pt-6">
-        <li><%= nav_link_to "Profile", profile_path, icon: :settings, active: controller_name == "profiles" %></li>
+        <li><%= nav_link_to "Profile", profile_path, icon: :settings, active: controller_path.start_with?("profile") %></li>
       </ul>
     </nav>
   </div>

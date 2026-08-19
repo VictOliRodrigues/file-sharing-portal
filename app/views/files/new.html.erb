@@ -1,0 +1,31 @@
+<% content_for :title, "Upload files" %>
+
+<div class="mx-auto max-w-2xl">
+  <div class="card p-6">
+    <h2 class="text-base font-semibold text-slate-900">Upload files</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Up to <%= human_size(Rails.application.config.x.portal.max_upload_size) %> per file.
+      <% if current_user.storage_quota %>
+        You have used <%= human_size(current_user.storage_used) %> of
+        <%= human_size(current_user.storage_quota) %>.
+      <% end %>
+    </p>
+
+    <%= form_with url: files_path, multipart: true, class: "mt-6 space-y-6",
+          data: { controller: "file-input" } do %>
+      <div>
+        <label for="files" class="form-label">Files</label>
+        <input type="file" id="files" name="files[]" multiple required
+               class="form-input file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50
+                      file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-indigo-700"
+               data-file-input-target="input" data-action="change->file-input#preview">
+        <p class="form-hint" data-file-input-target="summary">You can select more than one file.</p>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <%= link_to "Cancel", files_path, class: "btn-secondary" %>
+        <%= submit_tag "Upload", class: "btn-primary", data: { disable_with: "Uploading..." } %>
+      </div>
+    <% end %>
+  </div>
+</div>

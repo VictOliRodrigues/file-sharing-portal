@@ -1,0 +1,10 @@
+<div class="card px-6 py-16 text-center">
+  <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+    <%= inline_icon :files, css_class: "h-6 w-6" %>
+  </span>
+  <h3 class="mt-4 text-sm font-semibold text-slate-900">No files yet</h3>
+  <p class="mt-1 text-sm text-slate-500">Upload your first file to get started.</p>
+  <div class="mt-6">
+    <%= link_to "Upload files", new_file_path, class: "btn-primary" %>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<% content_for :title, @stored_file.name %>
+
+<div class="mx-auto max-w-3xl space-y-6">
+  <div class="card p-6">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="min-w-0">
+        <h2 class="truncate text-lg font-semibold text-slate-900"><%= @stored_file.name %></h2>
+        <p class="mt-1 text-sm text-slate-500">
+          <%= human_size(@stored_file.byte_size) %> · <%= @stored_file.content_type %>
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <%= link_to download_file_path(@stored_file), class: "btn-primary" do %>
+          <%= inline_icon :download %> Download
+        <% end %>
+      </div>
+    </div>
+
+    <% if @stored_file.previewable_image? %>
+      <div class="mt-6 overflow-hidden rounded-lg bg-slate-100">
+        <%= image_tag preview_file_path(@stored_file), alt: @stored_file.name,
+              class: "mx-auto max-h-96 w-auto object-contain" %>
+      </div>
+    <% end %>
+
+    <dl class="mt-6 grid grid-cols-1 gap-x-6 gap-y-4 border-t border-slate-200 pt-6 sm:grid-cols-2">
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Owner</dt>
+        <dd class="mt-1 text-sm text-slate-900"><%= @stored_file.user.name %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Uploaded</dt>
+        <dd class="mt-1 text-sm text-slate-900"><%= l @stored_file.created_at, format: :long %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Downloads</dt>
+        <dd class="mt-1 text-sm text-slate-900"><%= @stored_file.download_count %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Last downloaded</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <%= @stored_file.last_downloaded_at ? l(@stored_file.last_downloaded_at, format: :long) : "Never" %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Rename</h3>
+    <%= form_with model: @stored_file, url: file_path(@stored_file), method: :patch,
+          class: "mt-4 flex flex-wrap items-end gap-3" do |form| %>
+      <div class="min-w-0 flex-1">
+        <%= form.label :name, "File name", class: "form-label" %>
+        <%= form.text_field :name, required: true, class: "form-input" %>
+      </div>
+      <%= form.submit "Rename", class: "btn-secondary" %>
+    <% end %>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Recent downloads</h3>
+    <% if @downloads.any? %>
+      <ul class="mt-4 divide-y divide-slate-100">
+        <% @downloads.each do |download| %>
+          <li class="flex items-center justify-between py-2 text-sm">
+            <span class="text-slate-700">
+              <%= download.anonymous? ? "Share link visitor" : download.user.name %>
+            </span>
+            <span class="text-slate-500"><%= time_ago_in_words(download.created_at) %> ago</span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="mt-2 text-sm text-slate-500">This file has not been downloaded yet.</p>
+    <% end %>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Move to trash</h3>
+    <p class="mt-1 text-sm text-slate-500">
+      The file stays recoverable from the trash until you delete it permanently.
+    </p>
+    <div class="mt-4">
+      <%= button_to "Move to trash", file_path(@stored_file), method: :delete, class: "btn-danger",
+            form: { data: { turbo_confirm: "Move this file to the trash?" } } %>
+    </div>
+  </div>
+</div>

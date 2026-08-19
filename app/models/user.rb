@@ -6,6 +6,8 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :sessions, dependent: :destroy
+  has_many :stored_files, dependent: :destroy
+  has_many :downloads, dependent: :nullify
 
   normalizes :email_address, with: ->(value) { value.to_s.strip.downcase }
   normalizes :name, with: ->(value) { value.to_s.strip }
@@ -55,6 +57,19 @@ class User < ApplicationRecord
   def storage_quota
     quota = storage_quota_bytes || Rails.application.config.x.portal.default_storage_quota
     quota.to_i.zero? ? nil : quota.to_i
+  end
+
+  # Bytes currently occupied by this account. Files in the trash are counted,
+  # because their bytes are still stored until they are purged.
+  def storage_used
+    stored_files.sum(:byte_size)
+  end
+
+  def storage_used_percentage
+    quota = storage_quota
+    return nil if quota.nil? || quota.zero?
+
+    [ (storage_used.to_f / quota * 100).round, 100 ].min
   end
 
   def to_s

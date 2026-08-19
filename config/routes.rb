@@ -17,6 +17,21 @@ Rails.application.routes.draw do
     resources :sessions, only: %i[index destroy]
   end
 
+  # --- Files ----------------------------------------------------------------
+  resources :files, only: %i[index new create show update destroy] do
+    member do
+      post   :restore
+      delete :purge
+    end
+  end
+
+  # Byte serving lives in its own controller because it uses
+  # ActionController::Live. See FileTransfersController.
+  get "files/:id/download", to: "file_transfers#download", as: :download_file
+  get "files/:id/preview",  to: "file_transfers#preview",  as: :preview_file
+
+  resource :trash, only: :show, controller: "trash"
+
   # --- Operations -----------------------------------------------------------
   # Returns 200 when the application boots correctly. Used by container health
   # checks and uptime monitors.

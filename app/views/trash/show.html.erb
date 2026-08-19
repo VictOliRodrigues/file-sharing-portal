@@ -1,0 +1,60 @@
+<% content_for :title, "Trash" %>
+
+<div class="space-y-6">
+  <div>
+    <h2 class="text-base font-semibold text-slate-900">Trash</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Deleted files stay here until you remove them permanently. They still count
+      towards your storage usage.
+    </p>
+  </div>
+
+  <% if @stored_files.any? %>
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="table-header">Name</th>
+              <th class="table-header">Size</th>
+              <th class="table-header hidden md:table-cell">Deleted</th>
+              <th class="table-header"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <% @stored_files.each do |stored_file| %>
+              <tr class="hover:bg-slate-50">
+                <td class="table-cell">
+                  <span class="block max-w-xs truncate font-medium text-slate-900"
+                        title="<%= stored_file.name %>"><%= stored_file.name %></span>
+                </td>
+                <td class="table-cell whitespace-nowrap"><%= human_size(stored_file.byte_size) %></td>
+                <td class="table-cell hidden whitespace-nowrap md:table-cell">
+                  <%= time_ago_in_words(stored_file.deleted_at) %> ago
+                </td>
+                <td class="table-cell">
+                  <div class="flex items-center justify-end gap-1">
+                    <%= button_to restore_file_path(stored_file), method: :post, class: "btn-ghost",
+                          title: "Restore" do %>
+                      <%= inline_icon :restore %><span class="sr-only">Restore</span>
+                    <% end %>
+                    <%= button_to purge_file_path(stored_file), method: :delete, class: "btn-ghost",
+                          title: "Delete permanently",
+                          form: { data: { turbo_confirm: "Permanently delete #{stored_file.name}? This cannot be undone." } } do %>
+                      <%= inline_icon :trash %><span class="sr-only">Delete permanently</span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="card px-6 py-16 text-center">
+      <h3 class="text-sm font-semibold text-slate-900">The trash is empty</h3>
+      <p class="mt-1 text-sm text-slate-500">Deleted files will show up here.</p>
+    </div>
+  <% end %>
+</div>

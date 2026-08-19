@@ -1,0 +1,32 @@
+<tr id="<%= dom_id(stored_file) %>" class="hover:bg-slate-50">
+  <td class="table-cell">
+    <div class="flex items-center gap-3">
+      <span class="text-slate-400"><%= inline_icon :files %></span>
+      <div class="min-w-0">
+        <%= link_to stored_file.name, file_path(stored_file),
+              class: "block max-w-xs truncate font-medium text-slate-900 hover:text-indigo-600",
+              title: stored_file.name %>
+        <p class="text-xs text-slate-500 sm:hidden"><%= human_size(stored_file.byte_size) %></p>
+      </div>
+    </div>
+  </td>
+  <td class="table-cell whitespace-nowrap"><%= human_size(stored_file.byte_size) %></td>
+  <td class="table-cell hidden sm:table-cell">
+    <span class="badge bg-slate-100 text-slate-700"><%= stored_file.category %></span>
+  </td>
+  <td class="table-cell hidden whitespace-nowrap md:table-cell">
+    <%= time_ago_in_words(stored_file.created_at) %> ago
+  </td>
+  <td class="table-cell hidden whitespace-nowrap md:table-cell"><%= stored_file.download_count %></td>
+  <td class="table-cell">
+    <div class="flex items-center justify-end gap-1">
+      <%= link_to download_file_path(stored_file), class: "btn-ghost", title: "Download" do %>
+        <%= inline_icon :download %><span class="sr-only">Download</span>
+      <% end %>
+      <%= button_to file_path(stored_file), method: :delete, class: "btn-ghost", title: "Move to trash",
+            form: { data: { turbo_confirm: "Move #{stored_file.name} to the trash?" } } do %>
+        <%= inline_icon :trash %><span class="sr-only">Move to trash</span>
+      <% end %>
+    </div>
+  </td>
+</tr>

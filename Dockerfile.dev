@@ -15,6 +15,7 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
+RUN chmod +x bin/*
 
 EXPOSE 3000
 CMD ["bin/docker-dev-entrypoint"]

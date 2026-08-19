@@ -42,6 +42,9 @@ RUN bundle install && \
 
 COPY . .
 
+# Ensure the helper scripts stay executable regardless of the host filesystem.
+RUN chmod +x bin/*
+
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
 # Assets are precompiled without any real secret; SECRET_KEY_BASE_DUMMY tells

@@ -18,9 +18,6 @@ Rails.application.configure do
     policy.form_action     :self
     policy.frame_ancestors :none
     policy.frame_src       :none
-    # Never allow the browser to upgrade a downloaded file into an active document.
-    policy.sandbox         "allow-forms", "allow-same-origin", "allow-scripts", "allow-popups",
-                           "allow-downloads" if ENV["CSP_SANDBOX"].present?
   end
 
   # A fresh nonce per response. The Rails default derives the nonce from the

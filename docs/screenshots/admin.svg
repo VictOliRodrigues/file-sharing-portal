@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Administration screenshot placeholder">
+  <rect width="800" height="500" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="1" y="1" width="798" height="56" rx="12" fill="#ffffff"/>
+  <rect x="1" y="45" width="798" height="12" fill="#ffffff"/>
+  <line x1="1" y1="57" x2="799" y2="57" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="24" y="17" width="24" height="24" rx="6" fill="#4f46e5"/>
+  <rect x="60" y="24" width="150" height="10" rx="5" fill="#cbd5e1"/>
+  <rect x="1" y="57" width="180" height="442" fill="#ffffff"/>
+  <line x1="181" y1="57" x2="181" y2="499" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="24" y="86" width="120" height="10" rx="5" fill="#e2e8f0"/>
+  <rect x="24" y="118" width="100" height="10" rx="5" fill="#e2e8f0"/>
+  <rect x="24" y="150" width="130" height="10" rx="5" fill="#e2e8f0"/>
+  <rect x="24" y="182" width="90" height="10" rx="5" fill="#e2e8f0"/>
+  <rect x="213" y="90" width="170" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="399" y="90" width="170" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="585" y="90" width="182" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="213" y="204" width="554" height="270" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <line x1="213" y1="244" x2="767" y2="244" stroke="#e2e8f0" stroke-width="2"/>
+  <line x1="213" y1="292" x2="767" y2="292" stroke="#f1f5f9" stroke-width="2"/>
+  <line x1="213" y1="340" x2="767" y2="340" stroke="#f1f5f9" stroke-width="2"/>
+  <line x1="213" y1="388" x2="767" y2="388" stroke="#f1f5f9" stroke-width="2"/>
+  <line x1="213" y1="436" x2="767" y2="436" stroke="#f1f5f9" stroke-width="2"/>
+  <text x="400" y="46" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="15" font-weight="600" fill="#475569" text-anchor="middle">Administration</text>
+  <text x="490" y="266" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="13" fill="#94a3b8" text-anchor="middle">Screenshot placeholder — replace with a real capture</text>
+</svg>

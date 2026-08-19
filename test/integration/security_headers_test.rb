@@ -28,11 +28,28 @@ class SecurityHeadersTest < ActionDispatch::IntegrationTest
     assert_no_match(/'unsafe-eval'/, policy)
   end
 
-  test "inline scripts are permitted only through a nonce" do
+  test "the nonce in the policy is present and matches the one used by the page" do
     get sign_in_path
 
     policy = response.headers["Content-Security-Policy"]
-    assert_match(/script-src 'self' 'nonce-/, policy)
+    nonce = response.body[/name="csp-nonce" content="([^"]+)"/, 1]
+
+    assert nonce.present?, "the page must carry a non-empty nonce"
+    assert_includes policy, "'nonce-#{nonce}'"
+    # The import map is an inline script; without a matching nonce the whole
+    # front-end is blocked by the policy.
+    assert_match(/<script type="importmap"[^>]*nonce="#{Regexp.escape(nonce)}"/, response.body)
+  end
+
+  test "the nonce changes on every response" do
+    get sign_in_path
+    first = response.body[/name="csp-nonce" content="([^"]+)"/, 1]
+
+    get sign_in_path
+    second = response.body[/name="csp-nonce" content="([^"]+)"/, 1]
+
+    assert first.present?
+    assert_not_equal first, second
   end
 
   test "public share pages are protected by the same headers" do
@@ -49,6 +66,7 @@ class SecurityHeadersTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal "DENY", response.headers["X-Frame-Options"]
     assert response.headers["Content-Security-Policy"].present?
+    assert_match(/name="referrer" content="no-referrer"/, response.body)
   end
 
   test "the session cookie is marked HttpOnly and SameSite Lax" do

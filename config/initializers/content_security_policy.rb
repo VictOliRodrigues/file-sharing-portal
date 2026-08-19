@@ -23,8 +23,11 @@ Rails.application.configure do
                            "allow-downloads" if ENV["CSP_SANDBOX"].present?
   end
 
-  # Generate session-specific nonces for permitted inline scripts and styles.
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  # A fresh nonce per response. The Rails default derives the nonce from the
+  # session id, which is empty before a session exists -- that produces a
+  # nonce- source that matches nothing and blocks the import map on the sign
+  # in page -- and is predictable for the lifetime of a session.
+  config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src style-src]
 
   # Report violations without enforcing them by setting CSP_REPORT_ONLY=true,

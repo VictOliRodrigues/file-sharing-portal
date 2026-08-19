@@ -1,0 +1,36 @@
+<section class="card p-6">
+  <h3 class="text-base font-semibold text-slate-900">Create a share link</h3>
+  <p class="mt-1 text-sm text-slate-500">
+    Anyone with the link can download <%= subject %> without an account.
+    Leave a field empty to skip that restriction.
+  </p>
+
+  <%= form_with model: ShareLink.new, url: share_links_path,
+        class: "mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3" do |form| %>
+    <%= hidden_field_tag :stored_file_id, stored_file_id if stored_file_id %>
+    <%= hidden_field_tag :folder_id, folder_id if folder_id %>
+
+    <div>
+      <%= form.label :expires_at, "Expires at", class: "form-label" %>
+      <%= form.datetime_field :expires_at, class: "form-input" %>
+      <p class="form-hint">Optional.</p>
+    </div>
+
+    <div>
+      <%= form.label :download_limit, "Download limit", class: "form-label" %>
+      <%= form.number_field :download_limit, min: 1, class: "form-input", placeholder: "Unlimited" %>
+      <p class="form-hint">Optional.</p>
+    </div>
+
+    <div>
+      <%= form.label :password, "Password", class: "form-label" %>
+      <%= form.password_field :password, autocomplete: "new-password", class: "form-input",
+            placeholder: "No password" %>
+      <p class="form-hint">Optional, at least 6 characters.</p>
+    </div>
+
+    <div class="sm:col-span-3 flex justify-end">
+      <%= form.submit "Create link", class: "btn-primary" %>
+    </div>
+  <% end %>
+</section>

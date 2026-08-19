@@ -28,6 +28,7 @@ class StoredFile < ApplicationRecord
 
   has_one_attached :attachment
   has_many :downloads, dependent: :destroy
+  has_many :share_links, as: :shareable, dependent: :destroy
 
   before_validation :apply_attachment_metadata
 

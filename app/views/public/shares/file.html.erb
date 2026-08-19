@@ -1,0 +1,20 @@
+<% content_for :title, @stored_file.name %>
+
+<div class="card mx-auto max-w-lg p-8 text-center">
+  <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+    <%= inline_icon :files, css_class: "h-7 w-7" %>
+  </span>
+
+  <h1 class="mt-4 break-words text-lg font-semibold text-slate-900"><%= @stored_file.name %></h1>
+  <p class="mt-1 text-sm text-slate-500">
+    <%= human_size(@stored_file.byte_size) %> · shared by <%= @share_link.user.name %>
+  </p>
+
+  <div class="mt-6">
+    <%= link_to share_download_path(@share_link.token, @stored_file), class: "btn-primary w-full" do %>
+      <%= inline_icon :download %> Download
+    <% end %>
+  </div>
+
+  <%= render "public/shares/link_terms", share_link: @share_link %>
+</div>

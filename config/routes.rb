@@ -40,6 +40,18 @@ Rails.application.routes.draw do
 
   resource :trash, only: :show, controller: "trash"
 
+  # --- Sharing --------------------------------------------------------------
+  # Share links are addressed by their token rather than by id.
+  resources :share_links, only: %i[index show create destroy], param: :id
+
+  # Public, unauthenticated share endpoints. Kept short so links stay easy to
+  # paste, and throttled by Rack::Attack.
+  get  "s/:token",                    to: "public/shares#show",      as: :share
+  get  "s/:token/locked",             to: "public/shares#locked",    as: :locked_share
+  post "s/:token/unlock",             to: "public/shares#unlock",    as: :unlock_share
+  get  "s/:token/folders/:folder_id", to: "public/shares#folder",    as: :share_folder
+  get  "s/:token/files/:file_id",     to: "public/downloads#show",   as: :share_download
+
   # --- Operations -----------------------------------------------------------
   # Returns 200 when the application boots correctly. Used by container health
   # checks and uptime monitors.

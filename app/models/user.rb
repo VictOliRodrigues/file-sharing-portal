@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :folders, dependent: :destroy
   has_many :stored_files, dependent: :destroy
   has_many :downloads, dependent: :nullify
+  has_many :share_links, dependent: :destroy
 
   normalizes :email_address, with: ->(value) { value.to_s.strip.downcase }
   normalizes :name, with: ->(value) { value.to_s.strip }

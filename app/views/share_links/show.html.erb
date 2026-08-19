@@ -1,0 +1,88 @@
+<% content_for :title, "Share link" %>
+
+<div class="mx-auto max-w-2xl space-y-6">
+  <div class="card p-6">
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0">
+        <h2 class="truncate text-lg font-semibold text-slate-900">
+          <%= @share_link.shareable.name %>
+        </h2>
+        <p class="mt-1 text-sm text-slate-500">
+          <%= @share_link.folder_share? ? "Shared folder" : "Shared file" %>
+        </p>
+      </div>
+      <%= render "share_links/status", share_link: @share_link %>
+    </div>
+
+    <div class="mt-6" data-controller="clipboard">
+      <label for="share-url" class="form-label">Public link</label>
+      <div class="flex gap-2">
+        <input id="share-url" type="text" readonly class="form-input font-mono text-xs"
+               value="<%= share_url(@share_link.token) %>" data-clipboard-target="source">
+        <button type="button" class="btn-secondary whitespace-nowrap"
+                data-action="clipboard#copy" data-clipboard-target="button">Copy</button>
+      </div>
+      <p class="form-hint">
+        Anyone holding this link can download the shared content, so treat it
+        like a password.
+      </p>
+    </div>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="text-base font-semibold text-slate-900">Restrictions</h3>
+    <dl class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Expires</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <%= @share_link.expires_at ? l(@share_link.expires_at, format: :long) : "Never" %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Download limit</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <%= @share_link.download_limit || "Unlimited" %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Downloads so far</dt>
+        <dd class="mt-1 text-sm text-slate-900"><%= @share_link.download_count %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Password</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <%= @share_link.password_protected? ? "Required" : "Not set" %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Last accessed</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <%= @share_link.last_accessed_at ? l(@share_link.last_accessed_at, format: :long) : "Never" %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Created</dt>
+        <dd class="mt-1 text-sm text-slate-900"><%= l @share_link.created_at, format: :long %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <% unless @share_link.revoked? %>
+    <div class="card p-6">
+      <h3 class="text-base font-semibold text-slate-900">Revoke link</h3>
+      <p class="mt-1 text-sm text-slate-500">
+        The link stops working straight away. This cannot be undone, but you can
+        always create a new link.
+      </p>
+      <div class="mt-4">
+        <%= button_to "Revoke link", share_link_path(@share_link), method: :delete,
+              class: "btn-danger",
+              form: { data: { turbo_confirm: "Revoke this link? It will stop working immediately." } } %>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= link_to "Back to share links", share_links_path, class: "btn-ghost" %>
+  </div>
+</div>

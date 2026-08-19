@@ -1,0 +1,16 @@
+<% if share_link.expires_at || share_link.download_limit %>
+  <dl class="mt-6 space-y-1 border-t border-slate-200 pt-4 text-xs text-slate-500">
+    <% if share_link.expires_at %>
+      <div class="flex items-center justify-center gap-1.5">
+        <%= inline_icon :clock, css_class: "h-4 w-4" %>
+        <span>Available until <%= l share_link.expires_at, format: :long %></span>
+      </div>
+    <% end %>
+    <% if share_link.download_limit %>
+      <div class="flex items-center justify-center gap-1.5">
+        <%= inline_icon :download, css_class: "h-4 w-4" %>
+        <span><%= pluralize(share_link.remaining_downloads, "download") %> remaining</span>
+      </div>
+    <% end %>
+  </dl>
+<% end %>

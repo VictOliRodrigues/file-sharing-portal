@@ -14,6 +14,7 @@ class Folder < ApplicationRecord
   has_many :children, class_name: "Folder", foreign_key: :parent_id, dependent: :destroy,
            inverse_of: :parent
   has_many :stored_files, dependent: :nullify
+  has_many :share_links, as: :shareable, dependent: :destroy
 
   normalizes :name, with: ->(value) { SafeFilename.call(value) }
 

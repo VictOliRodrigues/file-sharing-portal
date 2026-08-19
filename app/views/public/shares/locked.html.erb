@@ -1,0 +1,22 @@
+<% content_for :title, "Password required" %>
+
+<div class="card mx-auto max-w-md p-8">
+  <div class="text-center">
+    <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+      <%= inline_icon :lock, css_class: "h-6 w-6" %>
+    </span>
+    <h1 class="mt-4 text-lg font-semibold text-slate-900">This link is password protected</h1>
+    <p class="mt-2 text-sm text-slate-500">
+      Enter the password you were given to see what was shared with you.
+    </p>
+  </div>
+
+  <%= form_with url: unlock_share_path(@share_link.token), class: "mt-6 space-y-5" do |form| %>
+    <div>
+      <%= form.label :password, class: "form-label" %>
+      <%= form.password_field :password, required: true, autofocus: true,
+            autocomplete: "off", class: "form-input" %>
+    </div>
+    <%= form.submit "Unlock", class: "btn-primary w-full" %>
+  <% end %>
+</div>

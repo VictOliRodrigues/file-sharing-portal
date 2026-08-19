@@ -29,6 +29,17 @@
         <dd class="mt-1 text-sm text-slate-900"><%= @stored_file.user.name %></dd>
       </div>
       <div>
+        <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Folder</dt>
+        <dd class="mt-1 text-sm text-slate-900">
+          <% if @stored_file.folder %>
+            <%= link_to @stored_file.folder.name, folder_path(@stored_file.folder),
+                  class: "text-indigo-600 hover:text-indigo-500" %>
+          <% else %>
+            All files (root)
+          <% end %>
+        </dd>
+      </div>
+      <div>
         <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Uploaded</dt>
         <dd class="mt-1 text-sm text-slate-900"><%= l @stored_file.created_at, format: :long %></dd>
       </div>
@@ -63,6 +74,9 @@
       </div>
     <% end %>
   </div>
+
+  <%= render "shared/share_form", subject: "this file",
+        stored_file_id: @stored_file.id, folder_id: nil %>
 
   <div class="card p-6">
     <h3 class="text-base font-semibold text-slate-900">Recent downloads</h3>

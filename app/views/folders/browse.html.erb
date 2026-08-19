@@ -49,5 +49,7 @@
 
   <% if @folder %>
     <%= render "folders/settings", folder: @folder, move_targets: @move_targets %>
+    <%= render "shared/share_form", subject: "this folder and everything in it",
+          stored_file_id: nil, folder_id: @folder.id %>
   <% end %>
 </div>

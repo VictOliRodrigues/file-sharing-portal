@@ -1,0 +1,10 @@
+<% case share_link.unavailable_reason %>
+<% when :revoked %>
+  <span class="badge bg-slate-100 text-slate-600">Revoked</span>
+<% when :expired %>
+  <span class="badge bg-amber-100 text-amber-800">Expired</span>
+<% when :limit_reached %>
+  <span class="badge bg-amber-100 text-amber-800">Limit reached</span>
+<% else %>
+  <span class="badge bg-emerald-100 text-emerald-800">Active</span>
+<% end %>

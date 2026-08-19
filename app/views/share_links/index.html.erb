@@ -1,0 +1,74 @@
+<% content_for :title, "Share links" %>
+
+<div class="space-y-6">
+  <div>
+    <h2 class="text-base font-semibold text-slate-900">Share links</h2>
+    <p class="mt-1 text-sm text-slate-500">
+      Every public link you have created. Revoking a link stops it working
+      immediately.
+    </p>
+  </div>
+
+  <% if @share_links.any? %>
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="table-header">Shared item</th>
+              <th class="table-header">Status</th>
+              <th class="table-header hidden sm:table-cell">Downloads</th>
+              <th class="table-header hidden md:table-cell">Created</th>
+              <th class="table-header"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <% @share_links.each do |share_link| %>
+              <tr class="hover:bg-slate-50">
+                <td class="table-cell">
+                  <div class="flex items-center gap-3">
+                    <span class="<%= share_link.folder_share? ? "text-indigo-500" : "text-slate-400" %>">
+                      <%= inline_icon share_link.folder_share? ? :folder : :files %>
+                    </span>
+                    <div class="min-w-0">
+                      <%= link_to share_link.shareable.name, share_link_path(share_link),
+                            class: "block max-w-xs truncate font-medium text-slate-900 hover:text-indigo-600" %>
+                      <% if share_link.password_protected? %>
+                        <p class="text-xs text-slate-500">Password protected</p>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                <td class="table-cell"><%= render "share_links/status", share_link: share_link %></td>
+                <td class="table-cell hidden whitespace-nowrap sm:table-cell">
+                  <%= share_link.download_count %><%= " of #{share_link.download_limit}" if share_link.download_limit %>
+                </td>
+                <td class="table-cell hidden whitespace-nowrap md:table-cell">
+                  <%= time_ago_in_words(share_link.created_at) %> ago
+                </td>
+                <td class="table-cell text-right">
+                  <% unless share_link.revoked? %>
+                    <%= button_to "Revoke", share_link_path(share_link), method: :delete,
+                          class: "btn-ghost",
+                          form: { data: { turbo_confirm: "Revoke this link? It will stop working immediately." } } %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="card px-6 py-16 text-center">
+      <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <%= inline_icon :share, css_class: "h-6 w-6" %>
+      </span>
+      <h3 class="mt-4 text-sm font-semibold text-slate-900">No share links yet</h3>
+      <p class="mt-1 text-sm text-slate-500">
+        Open a file or a folder and create a link to share it.
+      </p>
+      <div class="mt-6"><%= link_to "Browse files", files_path, class: "btn-primary" %></div>
+    </div>
+  <% end %>
+</div>

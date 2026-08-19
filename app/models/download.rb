@@ -5,6 +5,7 @@
 class Download < ApplicationRecord
   belongs_to :stored_file
   belongs_to :user, optional: true
+  belongs_to :share_link, optional: true
 
   scope :recent, -> { order(created_at: :desc) }
 

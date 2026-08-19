@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+  <head>
+    <title><%= content_for(:title) ? "#{content_for(:title)} · #{portal_name}" : portal_name %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%# Shared links must never be indexed by a search engine. %>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="referrer" content="no-referrer">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="flex h-full flex-col text-slate-900 antialiased">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto flex max-w-4xl items-center gap-2 px-4 py-4 sm:px-6">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+          <%= inline_icon :storage, css_class: "h-5 w-5" %>
+        </span>
+        <span class="text-base font-semibold text-slate-900"><%= portal_name %></span>
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-4xl px-4 py-4 text-xs text-slate-500 sm:px-6">
+        Shared securely with <%= portal_name %>.
+      </div>
+    </footer>
+  </body>
+</html>

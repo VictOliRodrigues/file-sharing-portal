@@ -1,0 +1,80 @@
+<% content_for :title, @folder.name %>
+
+<div class="space-y-6">
+  <nav class="flex items-center gap-1 text-sm text-slate-500" aria-label="Breadcrumb">
+    <% @breadcrumbs.each_with_index do |crumb, index| %>
+      <% if index.positive? %>
+        <span aria-hidden="true" class="text-slate-300">/</span>
+      <% end %>
+      <% if index == @breadcrumbs.size - 1 %>
+        <span class="max-w-[12rem] truncate font-medium text-slate-900"><%= crumb.name %></span>
+      <% else %>
+        <%= link_to crumb.name, share_folder_path(@share_link.token, crumb),
+              class: "max-w-[10rem] truncate hover:text-slate-700" %>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <div>
+    <h1 class="text-lg font-semibold text-slate-900"><%= @folder.name %></h1>
+    <p class="mt-1 text-sm text-slate-500">Shared by <%= @share_link.user.name %></p>
+  </div>
+
+  <% if @folders.any? || @stored_files.any? %>
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="table-header">Name</th>
+              <th class="table-header">Size</th>
+              <th class="table-header"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <% @folders.each do |folder| %>
+              <tr class="hover:bg-slate-50">
+                <td class="table-cell">
+                  <div class="flex items-center gap-3">
+                    <span class="text-indigo-500"><%= inline_icon :folder %></span>
+                    <%= link_to folder.name, share_folder_path(@share_link.token, folder),
+                          class: "block max-w-xs truncate font-medium text-slate-900 hover:text-indigo-600" %>
+                  </div>
+                </td>
+                <td class="table-cell">--</td>
+                <td class="table-cell"></td>
+              </tr>
+            <% end %>
+
+            <% @stored_files.each do |stored_file| %>
+              <tr class="hover:bg-slate-50">
+                <td class="table-cell">
+                  <div class="flex items-center gap-3">
+                    <span class="text-slate-400"><%= inline_icon :files %></span>
+                    <span class="block max-w-xs truncate font-medium text-slate-900"
+                          title="<%= stored_file.name %>"><%= stored_file.name %></span>
+                  </div>
+                </td>
+                <td class="table-cell whitespace-nowrap"><%= human_size(stored_file.byte_size) %></td>
+                <td class="table-cell text-right">
+                  <%= link_to share_download_path(@share_link.token, stored_file),
+                        class: "btn-ghost", title: "Download" do %>
+                    <%= inline_icon :download %><span class="sr-only">Download <%= stored_file.name %></span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="card px-6 py-16 text-center">
+      <h2 class="text-sm font-semibold text-slate-900">This folder is empty</h2>
+    </div>
+  <% end %>
+
+  <div class="text-center">
+    <%= render "public/shares/link_terms", share_link: @share_link %>
+  </div>
+</div>

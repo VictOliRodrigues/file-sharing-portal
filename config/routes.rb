@@ -40,6 +40,9 @@ Rails.application.routes.draw do
 
   resource :trash, only: :show, controller: "trash"
 
+  # --- Search ---------------------------------------------------------------
+  get "search", to: "searches#show"
+
   # --- Sharing --------------------------------------------------------------
   # Share links are addressed by their token rather than by id.
   resources :share_links, only: %i[index show create destroy], param: :id

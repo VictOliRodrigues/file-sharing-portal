@@ -12,6 +12,7 @@
         <li><%= nav_link_to "Dashboard", root_path, icon: :dashboard, active: current_page?(root_path) %></li>
         <li><%= nav_link_to "Files", files_path, icon: :files, active: controller_name == "files" %></li>
         <li><%= nav_link_to "Trash", trash_path, icon: :trash, active: controller_name == "trash" %></li>
+        <li><%= nav_link_to "Search", search_path, icon: :search, active: controller_name == "searches" %></li>
         <li><%= nav_link_to "Share links", share_links_path, icon: :share, active: controller_name == "share_links" %></li>
       </ul>
 

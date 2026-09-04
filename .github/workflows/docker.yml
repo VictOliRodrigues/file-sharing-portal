@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  # A weekly build from scratch. The cached build below reuses layers, so it
+  # can keep passing after a dependency change that would break a clean build
+  # -- which is exactly how a missing gem once reached a deployment.
+  schedule:
+    - cron: "0 4 * * 1"
 
 permissions:
   contents: read
@@ -19,6 +24,9 @@ jobs:
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Lint the Dockerfile
+        run: docker build --check .
+
       - name: Build the image
         uses: docker/build-push-action@v6
         with:
@@ -26,7 +34,10 @@ jobs:
           push: false
           load: true
           tags: file-sharing-portal:ci
-          cache-from: type=gha
+          # The scheduled run builds from scratch; pushes and pull requests
+          # reuse the layer cache.
+          no-cache: ${{ github.event_name == 'schedule' }}
+          cache-from: ${{ github.event_name == 'schedule' && '' || 'type=gha' }}
           cache-to: type=gha,mode=max
 
       - name: Check that the image boots and can run a Rails command

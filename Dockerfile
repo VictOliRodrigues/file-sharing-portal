@@ -1,5 +1,15 @@
 # syntax=docker/dockerfile:1
-# check=error=true
+#
+# Build checks are deliberately not promoted to errors (`# check=error=true`).
+# PaaS platforms such as Coolify rewrite this file before building, injecting
+# their build variables as `ARG` lines into every stage. That trips the
+# SecretsUsedInArgOrEnv check on a Dockerfile that declares no secret of its
+# own, and `skip=` does not suppress it because the offending lines are not
+# ours. Warnings are still printed, and CI runs `docker build --check`.
+#
+# Nothing below places a secret in ARG or ENV: assets are precompiled with
+# SECRET_KEY_BASE_DUMMY and the real SECRET_KEY_BASE only ever arrives at
+# runtime, through the environment.
 
 # Production image for the File Sharing Portal.
 #

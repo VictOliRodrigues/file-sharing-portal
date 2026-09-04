@@ -1,0 +1,36 @@
+name: Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the production image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v6
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build the image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: file-sharing-portal:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Check that the image boots and can run a Rails command
+        run: |
+          docker run --rm --entrypoint bin/rails \
+            -e SECRET_KEY_BASE=ci-only-not-a-real-secret \
+            file-sharing-portal:ci --version

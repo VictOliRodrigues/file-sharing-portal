@@ -21,7 +21,7 @@ gem "bcrypt", "~> 3.1.7"
 # MinIO, Backblaze B2, Cloudflare R2 or Hetzner Object Storage).
 gem "aws-sdk-s3", "~> 1.0", require: false
 # Image previews/variants for uploaded images.
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.0"
 
 # --- Security --------------------------------------------------------------
 # Request throttling and blocklisting.

@@ -24,8 +24,14 @@ gem "aws-sdk-s3", "~> 1.0", require: false
 # backend is no longer a dependency of the gem, so ruby-vips has to be declared
 # explicitly -- it is the variant processor Rails defaults to, and the one the
 # Docker image installs libvips for.
-gem "image_processing", "~> 2.0"
-gem "ruby-vips", "~> 2.2"
+#
+# Both are loaded lazily by Active Storage when a variant is actually
+# processed, so neither is required at boot. ruby-vips binds to libvips through
+# FFI and raises on load when that system library is absent, which would
+# otherwise break every task that merely boots the application -- linting and
+# security scanning in CI, for instance -- on a machine without it.
+gem "image_processing", "~> 2.0", require: false
+gem "ruby-vips", "~> 2.2", require: false
 
 # --- Security --------------------------------------------------------------
 # Request throttling and blocklisting.

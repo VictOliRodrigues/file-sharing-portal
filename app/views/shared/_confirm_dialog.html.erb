@@ -1,0 +1,25 @@
+<%# Application-wide replacement for window.confirm. Driven by Turbo through
+    the confirm controller; every `data: { turbo_confirm: "..." }` ends up here. %>
+<div data-controller="confirm">
+  <dialog data-confirm-target="dialog"
+          data-action="close->confirm#closed click->confirm#backdrop"
+          class="m-auto w-full max-w-md rounded-xl bg-white p-0 shadow-xl ring-1 ring-slate-200
+                 backdrop:bg-slate-900/50">
+    <div class="p-6">
+      <div class="flex gap-4">
+        <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <%= inline_icon :trash %>
+        </div>
+        <div class="min-w-0 pt-1.5">
+          <h2 class="text-base font-semibold text-slate-900">Are you sure?</h2>
+          <p class="mt-1 text-sm text-slate-600" data-confirm-target="message"></p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" class="btn-secondary" data-action="confirm#cancel">Cancel</button>
+        <button type="button" class="btn-danger" data-confirm-target="accept" data-action="confirm#accept">Delete</button>
+      </div>
+    </div>
+  </dialog>
+</div>

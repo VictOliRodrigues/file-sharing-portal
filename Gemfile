@@ -30,7 +30,7 @@ gem "aws-sdk-s3", "~> 1.0", require: false
 # FFI and raises on load when that system library is absent, which would
 # otherwise break every task that merely boots the application -- linting and
 # security scanning in CI, for instance -- on a machine without it.
-gem "image_processing", "~> 2.0", require: false
+gem "image_processing", "~> 2.1", require: false
 gem "ruby-vips", "~> 2.2", require: false
 
 # --- Security --------------------------------------------------------------

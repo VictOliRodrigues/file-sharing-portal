@@ -19,7 +19,7 @@ gem "bcrypt", "~> 3.1.7"
 # --- Storage ---------------------------------------------------------------
 # Active Storage S3 service (also used for any S3-compatible provider such as
 # MinIO, Backblaze B2, Cloudflare R2 or Hetzner Object Storage).
-gem "aws-sdk-s3", "~> 1.0", require: false
+gem "aws-sdk-s3", "~> 1.235", require: false
 # Image previews/variants for uploaded images. Since image_processing 2.0 the
 # backend is no longer a dependency of the gem, so ruby-vips has to be declared
 # explicitly -- it is the variant processor Rails defaults to, and the one the
